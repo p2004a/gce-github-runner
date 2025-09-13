@@ -42,6 +42,7 @@ maintenance_policy_terminate=
 arm=
 accelerator=
 min_cpu_platform_flag=
+pre_startup_script=
 
 OPTLIND=1
 while getopts_long :h opt \
@@ -71,6 +72,7 @@ while getopts_long :h opt \
   maintenance_policy_terminate optional_argument \
   accelerator optional_argument \
   min_cpu_platform optional_argument \
+  pre_startup_script optional_argument \
   help no_argument "" "$@"
 do
   case "$opt" in
@@ -152,6 +154,9 @@ do
     min_cpu_platform)
       min_cpu_platform_flag=--min-cpu-platform="$OPTLARG"
       ;;
+    pre_startup_script)
+      pre_startup_script="$OPTLARG"
+      ;;
     h|help)
       usage
       exit 0
@@ -211,6 +216,8 @@ function start_vm {
     ${shutdown_command}
   }
   trap shutdown ERR
+
+  ${pre_startup_script}
   "
 
   startup_script="

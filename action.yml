@@ -107,6 +107,10 @@ inputs:
     description: "When specified, the VM will be scheduled on host with specified CPU architecture or a newer one."
     default: AUTOMATIC
     required: true
+  pre_startup_script:
+    description: "Shell script to run at the beggining of VM startup before github actions runner setup, allows to for example install missing dependencies."
+    default: ''
+    required: false
 outputs:
   label:
     description: >-
@@ -145,4 +149,8 @@ runs:
         --maintenance_policy_terminate=${{ inputs.maintenance_policy_terminate }}
         --arm=${{ inputs.arm }}
         --min_cpu_platform='${{ inputs.min_cpu_platform }}'
+        --pre_startup_script="$PRE_STARTUP_SCRIPT"
       shell: bash
+      env:
+        # We use env variable to avoid issues with shell substitution
+        PRE_STARTUP_SCRIPT: '${{ inputs.pre_startup_script }}'
